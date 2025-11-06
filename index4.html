@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/tp2/calculatrice/css4.css">
+    <title>calcule</title>
+</head>
+<body>
+     <div class="calculator">
+        <div class="screen">
+            0
+        </div>
+        <div class="button">
+            <div class="row">
+                <input type="button" class="btn" value="C">
+                <input type="button" class="btn" value="/">
+                <input type="button" class="btn" value="1/x">
+                <input type="button" class="btn" value="⌫">
+            </div>
+            <div class="row">
+                <input type="button" value="7">
+                <input type="button" value="8">
+                <input type="button" value="9">
+                <input type="button" class="btn" value="*">
+            </div>
+            <div class="row">
+                <input type="button" value="4">
+                <input type="button" value="5">
+                <input type="button" value="6">
+                <input type="button" class="btn" value="-">
+            </div>
+            <div class="row">
+                <input type="button" value="1">
+                <input type="button" value="2">
+                <input type="button" value="3">
+                <input type="button" class="btn" value="+">
+
+            </div>
+            <div class="row">
+                <input type="button" value=".">
+                <input type="button" value="0">
+                <input type="button" class="bbtn" value="=" style="background-color: rgb(246, 109, 40);">
+            </div>
+        </div>
+    </div>
+    <script>
+        const screen = document.querySelector(".screen");
+        const buttons = document.querySelectorAll(".calculator input");
+        let calcul = "";
+        let justCalculated = false;
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const value = btn.value;
+
+                switch (value) {
+                    case "C":
+                        calcul = "";
+                        screen.textContent = "0";
+                        justCalculated = false;
+                        break;
+
+                    case "⌫": // delete : efface 1 chiffre ou tout le résultat
+                        if (justCalculated) {
+                            calcul = "";
+                            screen.textContent = "0";
+                            justCalculated = false;
+                        } else if (screen.textContent.length > 1) {
+                            screen.textContent = screen.textContent.slice(0, -1);
+                            calcul = screen.textContent;
+                        } else {
+                            screen.textContent = "0";
+                            calcul = "";
+                        }
+                        break;
+
+                    case "1/x":
+                        try {
+                            const num = parseFloat(screen.textContent);
+                            if (num === 0) {
+                                screen.textContent = "Erreur";
+                                calcul = "";
+                            } else {
+                                const inv = 1 / num;
+                                const rounded = parseFloat(inv.toFixed(10)); //  arrondi à 10 chiffres
+                                screen.textContent = rounded;
+                                calcul = rounded.toString();
+                                justCalculated = true;
+                            }
+                        } catch {
+                            screen.textContent = "Erreur";
+                            calcul = "";
+                        }
+                        break;
+
+                    case "=":
+                        try {
+                            const result = eval(calcul);
+                            const rounded = parseFloat(result.toFixed(10)); //  arrondi à 10 chiffres
+                            screen.textContent = rounded;
+                            calcul = rounded.toString();
+                            justCalculated = true;
+                        } catch {
+                            screen.textContent = "Erreur";
+                            calcul = "";
+                        }
+                        break;
+
+                    default: // chiffres et opérateurs
+                        if (justCalculated) {
+                            if (!isNaN(value)) {
+                                calcul = value;
+                                screen.textContent = value;
+                            } else {
+                                calcul += value;
+                                screen.textContent = calcul;
+                            }
+                            justCalculated = false;
+                        } else {
+                            if (screen.textContent === "0" && !isNaN(value)) {
+                                calcul = value;
+                                screen.textContent = value;
+                            } else {
+                                calcul += value;
+                                screen.textContent = calcul;
+                            }
+                        }
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
